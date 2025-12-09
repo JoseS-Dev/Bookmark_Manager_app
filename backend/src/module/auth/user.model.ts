@@ -1,11 +1,12 @@
-import {prisma} from '../../config/prisma.client.ts';
-import type { CreateUserData, UpdateUserData } from '../../interfaces/user.interface.ts';
+import {prisma} from '../../../config/prisma.client.ts';
+import type { UserDataCreate, UserDataUpdate } from '../../interfaces/user.interface.ts';
 import { selectAllWithoutTimestamps } from '../../core/utils/function.utils.ts';
 import bcryptjs from 'bcryptjs';
+
 // Modelo que interactua con la tabla de users en la base de datos
 export class ModelUser {
     // Método para registrar un nuevo usuario
-    createUser = async (data: CreateUserData) => {
+    createUser = async (data: UserDataCreate) => {
         if(!data) return {error: "Los datos no fueron proporcionados"};
         const {email_user, username_user, ...rest} = data;
         // Se verifica si ya existen un usuario con ese email o username
@@ -113,7 +114,7 @@ export class ModelUser {
     }
 
     // Método para actualizar los datos de un usuario por su ID
-    updateUser = async (userId: number, data: Partial<UpdateUserData>) => {
+    updateUser = async (userId: number, data: Partial<UserDataUpdate>) => {
         if(!userId || !data) return {error: "No se proporcionó un ID de usuario o datos para actualizar"};
         // Se verifica si existe el usuario
         const existingUser = await prisma.users.findUnique({
