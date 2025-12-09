@@ -1,5 +1,5 @@
 import {prisma} from '../../../config/prisma.client.ts';
-import type { UserDataCreate, UserDataUpdate } from '../../interfaces/user.interface.ts';
+import type { UserDataCreate, UserDataUpdate } from '../../interfaces/auth/user.interface.ts';
 import { selectAllWithoutTimestamps } from '../../core/utils/function.utils.ts';
 import bcryptjs from 'bcryptjs';
 

@@ -8,3 +8,14 @@ export function selectAllWithoutTimestamps(tableName: any){
     })
     return fields
 }
+
+// Función para automatizar las rutas automáticamente
+export function registerRoutes(routerConfig: object, app: any){
+    Object.values(routerConfig).forEach((RouteGroup) => {
+        if(typeof RouteGroup === 'object'){
+            Object.values(RouteGroup).forEach((Route) => {
+                app.use(Route);
+            });
+        }
+    })
+}

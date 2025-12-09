@@ -3,6 +3,8 @@ import type {Request, Response} from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import {SETTINGS} from './config/settings.config.ts'
+import { ApiRoutes } from './src/api/routes/api.routes.ts';
+import { registerRoutes } from './src/core/utils/function.utils.ts';
 
 // Defino el servidor de express
 const app = express();
@@ -16,6 +18,8 @@ app.use(morgan('dev'));
 app.get('/', (req: Request, res: Response) => {
     res.send('Hola boorkmark manager backend!');
 })
+
+registerRoutes(ApiRoutes, app);
 
 // Escuchamos el servidor
 app.listen(SETTINGS.PORT, () => {
