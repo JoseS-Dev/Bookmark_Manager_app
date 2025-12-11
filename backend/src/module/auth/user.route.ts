@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import { UserController } from './user.controller.ts';
 import { ModelUser } from './user.model.ts';
+import { uploadUserImage } from '../../api/middlewares/multer.middleware.ts';
 
 const router: Router = Router();
 const controllerUser = new UserController(new ModelUser());
@@ -15,7 +16,7 @@ router.post('/logout/:userId', controllerUser.logoutUser);
 // Ruta para obtener los datos de un usuario por su ID
 router.get('/user/:userId', controllerUser.getUserById);
 // Ruta para actualizar los datos de un usuario por su ID
-router.patch('/update/:userId', controllerUser.updateUser);
+router.patch('/update/:userId',uploadUserImage, controllerUser.updateUser);
 // Ruta para eliminar un usuario por su ID
 router.delete('/delete/:userId', controllerUser.deleteUser);
 

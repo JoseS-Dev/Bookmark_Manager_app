@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import { CollectionController } from './collection.controller.ts';
 import { ModelCollection } from './collection.model.ts';
+import { uploadCollectionImage } from '../../../api/middlewares/multer.middleware.ts';
 
 const router: Router = Router();
 const controllerCollection = new CollectionController(new ModelCollection());
@@ -15,9 +16,9 @@ router.get('/private/user/:userId', controllerCollection.getPrivateCollectionsBy
 // Ruta para obtener una colección por su slug
 router.get('/slug/:slug', controllerCollection.getCollectionBySlug);
 // Ruta para crear una nueva colección
-router.post('/create', controllerCollection.createCollection);
+router.post('/create',uploadCollectionImage, controllerCollection.createCollection);
 // Ruta para actualizar una colección por su ID
-router.patch('/update/:collectionId', controllerCollection.updateCollection);
+router.patch('/update/:collectionId',uploadCollectionImage, controllerCollection.updateCollection);
 // Ruta para eliminar una colección por su ID
 router.delete('/delete/:collectionId', controllerCollection.deleteCollection);
 
