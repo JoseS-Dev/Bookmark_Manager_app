@@ -2,6 +2,7 @@ import {Router} from 'express';
 import { UserController } from './user.controller.ts';
 import { ModelUser } from './user.model.ts';
 import { uploadUserImage } from '../../api/middlewares/multer.middleware.ts';
+import { verifyToken } from '../../api/middlewares/auth.middleware.ts';
 
 const router: Router = Router();
 const controllerUser = new UserController(new ModelUser());
@@ -10,9 +11,9 @@ const controllerUser = new UserController(new ModelUser());
 // Ruta para registrar un nuevo usuario
 router.post('/register', controllerUser.createUser);
 // Ruta para loguear un usuario (Opcional porque utilizo Clerk)
-router.post('/login', controllerUser.loginUser);
+router.post('/login', verifyToken, controllerUser.loginUser);
 // Ruta para deslogear un usuario (Opcional porque utilizo Clerk)
-router.post('/logout/:userId', controllerUser.logoutUser);
+router.post('/logout/:userId', verifyToken, controllerUser.logoutUser);
 // Ruta para obtener los datos de un usuario por su ID
 router.get('/user/:userId', controllerUser.getUserById);
 // Ruta para actualizar los datos de un usuario por su ID

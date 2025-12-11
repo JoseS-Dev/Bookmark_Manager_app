@@ -52,7 +52,9 @@ export class ModelUser {
             where: {email_user: email_user},
             select: {
                 id: true,
+                email_user: true,
                 password_user: true,
+                username_user: true
             }
         });
         if(!existingEmail) return {error: "Email o contraseña incorrectos"};
@@ -75,7 +77,7 @@ export class ModelUser {
                 if(!updatedSession) return {error: "Error al actualizar la sesión"};
                 return {
                     message: "Inicio de sesión exitoso",
-                    userId: existingEmail.id
+                    userId: existingEmail
                 }
             }
             // Si no habia logueado antes, se crea una nueva sesión
@@ -85,7 +87,7 @@ export class ModelUser {
             if(!newSession) return {error: "Error al crear la sesión"};
             return {
                 message: "Inicio de sesión exitoso",
-                userId: existingEmail.id
+                user: existingEmail
             }
         }
         return {error: "Email o contraseña incorrectos"};

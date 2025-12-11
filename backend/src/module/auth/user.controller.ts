@@ -1,6 +1,7 @@
 import type {Request, Response} from 'express';
 import {ModelUser} from './user.model.ts';
 import { validateUserData, validateUserUpdateData } from './user.schema.ts';
+import { authToken } from '../../api/middlewares/auth.middleware.ts';
 
 // Controlador que maneja las solicitudes relacionadas con los usuarios
 export class UserController {
@@ -40,6 +41,7 @@ export class UserController {
             if(result.error) return res.status(400).json({error: result.error});
             return res.status(200).json({
                 message: result.message,
+                token: authToken(result.user!)
             });
         }
         catch(error){
