@@ -16,6 +16,9 @@
     "strict": true,
     "target": "ES2022",
     "noEmit": true,
-    "allowImportingTsExtensions": true
-  }
+    "allowImportingTsExtensions": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node", "express", "multer"]
+  },
+  "include": ["src/**/*", "types/**/*"]
 }

@@ -1,7 +1,6 @@
 import type {Request, Response} from 'express';
 import { ModelBookmark } from './bookmark.model.ts';
 import { validateBookmarkData, validateBookmarkUpdateData } from './bookmark.schema.ts';
-import type { MulterRequest } from '../../../interfaces/general/general.interface.ts';
 
 // Controlador que maneja las solicitudes relacionadas con los bookmarks
 export class BookmarkController {
@@ -76,7 +75,7 @@ export class BookmarkController {
     }
 
     // Controlador para crear un nuevo bookmark
-    createBookmark = async (req: MulterRequest, res: Response) => {
+    createBookmark = async (req: Request, res: Response) => {
         if(!req.file) return res.status(400).json({error: "No se proporcionó una imagen para el bookmark"});
         const BookmarkData = {
             ...req.body,
@@ -103,7 +102,7 @@ export class BookmarkController {
     }
 
     // Controlador para actualizar un bookmark por su ID
-    updateBookmark = async (req: MulterRequest, res: Response) => {
+    updateBookmark = async (req: Request, res: Response) => {
         if(!req.file) return res.status(400).json({error: "No se proporcionó una imagen para el bookmark"});
         const BookmarkData = {
             ...req.body,
