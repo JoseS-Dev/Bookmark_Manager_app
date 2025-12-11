@@ -113,6 +113,7 @@ model comment{
   updated_at DateTime @updatedAt
   bookmark bookmark @relation(fields: [bookmark_id], references: [id])
   user users @relation(fields: [user_id], references: [id])
+  @@unique([bookmark_id, user_id, content_comment])
 }
 
 // Defino el modelo de sessión para los usuarios (Login) (Es temporal porque uso Clerk)
