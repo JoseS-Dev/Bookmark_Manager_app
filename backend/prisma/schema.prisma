@@ -45,7 +45,7 @@ model collection{
   is_public Boolean @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user users @relation(fields: [user_id], references: [id])
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
   bookmarks bookmark[]
 }
 
@@ -63,7 +63,7 @@ model bookmark{
   is_favorite Boolean @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  collection collection @relation(fields: [collection_id], references: [id])
+  collection collection @relation(fields: [collection_id], references: [id], onDelete: Cascade)
   bookmark_tag bookmark_tag[]
   likes Like[]
   bookmark_comments comment[]
@@ -85,8 +85,8 @@ model bookmark_tag{
   tag_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  bookmark bookmark @relation(fields: [bookmark_id], references: [id])
-  tag tag @relation(fields: [tag_id], references: [id])
+  bookmark bookmark @relation(fields: [bookmark_id], references: [id], onDelete: Cascade)
+  tag tag @relation(fields: [tag_id], references: [id], onDelete: Cascade)
   @@id([bookmark_id, tag_id])
 }
 
@@ -97,11 +97,9 @@ model Like{
   user_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  bookmark bookmark @relation(fields: [bookmark_id], references: [id])
-  user users @relation(fields: [user_id], references: [id])
+  bookmark bookmark @relation(fields: [bookmark_id], references: [id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
-
-
 
 // Defino el modelo de comentarios para los bookmarks
 model comment{
@@ -111,8 +109,8 @@ model comment{
   content_comment String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  bookmark bookmark @relation(fields: [bookmark_id], references: [id])
-  user users @relation(fields: [user_id], references: [id])
+  bookmark bookmark @relation(fields: [bookmark_id], references: [id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
   @@unique([bookmark_id, user_id, content_comment])
 }
 
@@ -125,7 +123,7 @@ model session{
   looged_out_at DateTime?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user users @relation(fields: [user_id], references: [id])
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 // Defino el modelo de estadisticas de uso del usuario
@@ -138,5 +136,5 @@ model user_stats{
   total_comments_made Int @default(0)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user users @relation(fields: [user_id], references: [id])
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

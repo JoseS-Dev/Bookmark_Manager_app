@@ -19,7 +19,10 @@ export class ModelUser {
         if(existingUser) return {error: "El usuario ya existe"}
         // Si no existe se procede a registrar el nuevo usuario
         const newUser = await prisma.users.create({
-            data: data,
+            data: {
+                ...data,
+                password_user: await bcryptjs.hash(rest.password_user, 10)
+            },
             select: selectAllWithoutTimestamps(prisma.users)
         });
         if(!newUser) return {error: "Error al crear el usuario"};
@@ -90,7 +93,7 @@ export class ModelUser {
                 user: existingEmail
             }
         }
-        return {error: "Email o contraseña incorrectos"};
+        return {error: "Email o contraseña incorrectos :)"};
     }
 
     // Método para desloguear un usuario por su ID

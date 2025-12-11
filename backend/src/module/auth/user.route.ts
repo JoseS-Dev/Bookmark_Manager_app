@@ -11,11 +11,13 @@ const controllerUser = new UserController(new ModelUser());
 // Ruta para registrar un nuevo usuario
 router.post('/register', controllerUser.createUser);
 // Ruta para loguear un usuario (Opcional porque utilizo Clerk)
-router.post('/login', verifyToken, controllerUser.loginUser);
+router.post('/login', controllerUser.loginUser);
 // Ruta para deslogear un usuario (Opcional porque utilizo Clerk)
 router.post('/logout/:userId', verifyToken, controllerUser.logoutUser);
 // Ruta para obtener los datos de un usuario por su ID
 router.get('/user/:userId', controllerUser.getUserById);
+// Ruta para verificar si el usuario esta autenticado
+router.get('/verify-auth/:userId', verifyToken, controllerUser.verifyUserAuth);
 // Ruta para actualizar los datos de un usuario por su ID
 router.patch('/update/:userId',uploadUserImage, controllerUser.updateUser);
 // Ruta para eliminar un usuario por su ID

@@ -45,6 +45,7 @@ export class UserController {
             });
         }
         catch(error){
+            console.error(error);
             return res.status(500).json({error: "Error interno del servidor"});
         }
     }
@@ -83,7 +84,11 @@ export class UserController {
     // Controlador para actualizar los datos de un usuario
     updateUser = async (req: Request, res: Response) => {
         const {userId} = req.params;
-        const validation = validateUserUpdateData(req.body);
+        const Data = {
+            ...req.body,
+            avatar_url: req.file ? req.file.path : undefined
+        }
+        const validation = validateUserUpdateData(Data);
         try{
             if(!validation.success){
                 return res.status(400).json({
@@ -114,7 +119,23 @@ export class UserController {
             });
         }
         catch(error){
+            console.error(error);
             return res.status(500).json({error: "Error interno del servidor"});
         }
+    }
+
+    // Controaldor para verificar si el usuario esta autencicado
+    verifyUserAuth = async (req: Request, res: Response) => {
+        if(!req.user){
+            return res.status(401).json({
+                error: "Usuario no autenticado",
+                isAuthenticated: false
+            })
+        }
+        return res.status(200).json({
+            message: "Usuario autenticado",
+            isAuthenticated: true,
+            user: req.user
+        });
     }
 }

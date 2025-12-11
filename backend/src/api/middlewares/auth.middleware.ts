@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { SETTINGS } from '../../../config/settings.config.ts';
-import type { UserData } from '../../interfaces/auth/user.interface.ts';
-import type { AuthenticatedUser } from '../../interfaces/general/general.interface.ts';
+import type { UserData, AuthenticatedUser } from '../../interfaces/index.ts';
 
 
 // Función que asigna el token al usuario autenticado
