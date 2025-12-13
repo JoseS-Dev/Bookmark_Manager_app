@@ -18,10 +18,34 @@ app.use(morgan('dev'));
 app.get('/', (req: Request, res: Response) => {
     res.send('Hola boorkmark manager backend!');
 })
+ // Ruta de sanidad
+// Health check para Render
+app.get('/health', (req: Request, res: Response) => {
+    res.status(200).json({ status: 'healthy' });
+});
 
+// Ruta no encontrada
+app.use('*', (req: Request, res: Response) => {
+    res.status(404).json({ 
+        error: 'Ruta no encontrada',
+        path: req.originalUrl 
+    });
+});
+
+// Manjo global de errores
+app.use((err: Error, req: Request, res: Response, next: Function) => {
+    console.error('Error no manejado:', err);
+    res.status(500).json({ 
+        error: 'Error interno del servidor',
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
+
+// Rutas de la API
 registerRoutes(ApiRoutes, app);
 
 // Escuchamos el servidor
 app.listen(SETTINGS.PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${SETTINGS.PORT}`);
+    console.log(`Entorno: ${SETTINGS.NODE_ENV}`);
 })
