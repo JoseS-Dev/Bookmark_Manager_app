@@ -22,5 +22,11 @@ router.get('/verify-auth/:userId', verifyToken, controllerUser.verifyUserAuth);
 router.patch('/update/:userId',uploadUserImage, controllerUser.updateUser);
 // Ruta para eliminar un usuario por su ID
 router.delete('/delete/:userId', controllerUser.deleteUser);
+// Ruta para obtener las estadísticas de un usuario por su ID
+router.get('/statistics/:userId', controllerUser.getUserStatistics);
+// Ruta para crear estadísticas iniciales para un nuevo usuario
+router.post('/statistics/:userId', controllerUser.createUserStadistics);
+// Ruta para actualizar las estadísticas de un usuario
+router.patch('/statistics/:userId', controllerUser.updateUserStadistics);
 
 export const UserRoute = router;

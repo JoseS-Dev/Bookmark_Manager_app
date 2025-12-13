@@ -1,5 +1,5 @@
 import {prisma} from '../../../config/prisma.client.ts';
-import type { UserDataCreate, UserDataUpdate } from '../../interfaces/auth/user.interface.ts';
+import type { UserDataCreate, UserDataUpdate, UserStadistics } from '../../interfaces/auth/user.interface.ts';
 import { selectAllWithoutTimestamps } from '../../core/utils/function.utils.ts';
 import bcryptjs from 'bcryptjs';
 
@@ -157,6 +157,137 @@ export class ModelUser {
         if(!deletedUser) return {error: "Error al eliminar el usuario"};
         return {
             message: "Usuario eliminado exitosamente"
+        }
+    }
+    // Método apra obtener las estadisticas de usuarios
+    getUserStatistics = async (userId: number) => {
+        if(!userId) return {error: "No se proporcionó un ID de usuario"};
+        // Se verifica si existe el usuario
+        const existingUser = await prisma.users.findUnique({
+            where: {id: userId}
+        });
+        if(!existingUser) return {error: "Usuario no encontrado"};
+        // Si existe, se obtienen las estadisticas del usuario
+        const userStadistics = await prisma.user_stats.findFirst({
+            where: {user_id: userId}
+        });
+        if(!userStadistics) return {error: "Error al obtener las estadísticas del usuario"};
+        return {
+            message: "Estadísticas del usuario obtenidas exitosamente",
+            statistics: userStadistics
+        }
+    }
+
+    // Método para crear las estadísticas de un usuario
+    createUserStatistics = async (userId: number) => {
+        if(!userId) return {error: "No se proporcionó un ID de usuario"};
+        // Se verifica si existe el usuario
+        const existingUser = await prisma.users.findUnique({
+            where: {id: userId}
+        });
+        if(!existingUser) return {error: "Usuario no encontrado"};
+        // Si existe, se obtienen todos, los bookmarks, colecciones, likes y comentarios del usuario
+        const newStatistics = await prisma.$transaction(async (tsx) => {
+            // Priemro obtenemos todos los colecciones del usuario
+            const totalCollections = await tsx.collection.count({
+                where: {user_id: userId}
+            });
+            const userCollections = await tsx.collection.findMany({
+                where: {user_id: userId},
+                select: {id: true}
+            });
+            // Luego obtenemos todos los bookmarks del usuario de esa colecciones
+            const collectionIds = userCollections.map(col => col.id);
+            // Obtener todos los bookmarks del usuario (de sus colecciones)
+            const totalBookmarks = await tsx.bookmark.count({
+                where: { 
+                    collection_id: { 
+                        in: collectionIds.length > 0 ? collectionIds : []
+                    }
+                }
+            });
+            // Luego obtenemos todos los likes dados por el usuario
+            const totalLikesGiven = await tsx.like_bookmark.count({
+                where: {user_id: userId}
+            });
+            // Finalmente obtenemos todos los comentarios hechos por el usuario
+            const totalCommentsMade = await tsx.comment_bookmark.count({
+                where: {user_id: userId}
+            });
+            // Una vez que hemos obtenido todos los datos, procedemos a crear las estadísticas del usuario
+            const statistics = await tsx.user_stats.create({
+                data: {
+                    user_id: userId,
+                    total_bookmarks: totalBookmarks,
+                    total_collections: totalCollections,
+                    total_likes_given: totalLikesGiven,
+                    total_comments_made: totalCommentsMade
+                }
+            })
+            return {message: "Estadísticas del usuario creadas exitosamente", statistics}
+        });
+        if(!newStatistics) return {error: "Error al crear las estadísticas del usuario"};
+        return {
+            message: newStatistics.message,
+            statistics: newStatistics.statistics
+        }
+    }
+
+    // Método para actualizar las estadísticas de un usuario por su ID
+    updateUserStatistics = async (userId: number) => {
+        if(!userId) return {error: "No se proporcionó un ID de usuario o datos para actualizar"};
+        // Se verifica si existe el usuario
+        const existingUser = await prisma.users.findUnique({
+            where: {id: userId}
+        });
+        if(!existingUser) return {error: "Usuario no encontrado"};
+        // Si existe, se obtienen todos, los bookmarks, colecciones, likes y comentarios del usuario
+        const newStatistics = await prisma.$transaction(async (tsx) => {
+            // Priemro obtenemos todos los colecciones del usuario
+            const totalCollections = await tsx.collection.count({
+                where: {user_id: userId}
+            });
+            const userCollections = await tsx.collection.findMany({
+                where: {user_id: userId},
+                select: {id: true}
+            });
+            // Luego obtenemos todos los bookmarks del usuario de esa colecciones
+            const collectionIds = userCollections.map(col => col.id);
+            // Obtener todos los bookmarks del usuario (de sus colecciones)
+            const totalBookmarks = await tsx.bookmark.count({
+                where: { 
+                    collection_id: { 
+                        in: collectionIds.length > 0 ? collectionIds : []
+                    }
+                }
+            });
+            // Luego obtenemos todos los likes dados por el usuario
+            const totalLikesGiven = await tsx.like_bookmark.count({
+                where: {user_id: userId}
+            });
+            // Finalmente obtenemos todos los comentarios hechos por el usuario
+            const totalCommentsMade = await tsx.comment_bookmark.count({
+                where: {user_id: userId}
+            });
+            const existingStatistics = await tsx.user_stats.findFirst({
+                where: {user_id: userId}
+            });
+            // Una vez que hemos obtenido todos los datos, procedemos a crear las estadísticas del usuario
+            const statistics = await tsx.user_stats.update({
+                where: {id: existingStatistics ? existingStatistics.id : 0},
+                data: {
+                    total_bookmarks: totalBookmarks,
+                    total_collections: totalCollections,
+                    total_likes_given: totalLikesGiven,
+                    total_comments_made: totalCommentsMade
+                }
+            })
+            return {message: "Estadísticas del usuario creadas exitosamente", statistics}
+        });
+        if(!newStatistics) return {error: "Error al actualizar las estadísticas del usuario"};
+        return {
+            message: newStatistics.message,
+            statistics: newStatistics.statistics
         }
     }
 }

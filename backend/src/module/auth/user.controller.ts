@@ -138,4 +138,52 @@ export class UserController {
             user: req.user
         });
     }
+
+    // Método para obtener las estadísticas de un usuario
+    getUserStatistics = async (req: Request, res: Response) => {
+        const { userId } = req.params;
+        try{
+            const result = await this.modelUser.getUserStatistics(Number(userId));
+            if(result.error) return res.status(404).json({ error: result.error });
+            return res.status(200).json({
+                message: result.message,
+                statistics: result.statistics
+            });
+        }
+        catch(error){
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+    }
+
+    // Método para crear estadísticas iniciales para un nuevo usuario
+    createUserStadistics = async (req: Request, res: Response) => {
+        const { userId } = req.params;
+        try{
+            const result = await this.modelUser.createUserStatistics(Number(userId));
+            if(result.error) return res.status(400).json({ error: result.error });
+            return res.status(201).json({
+                message: result.message,
+                statistics: result.statistics
+            });
+        }
+        catch(error){
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+    }
+
+    // Método para actualizar las estadísticas de un usuario
+    updateUserStadistics = async (req: Request, res: Response) => {
+        const {userId} = req.params;
+        try{
+            const result = await this.modelUser.updateUserStatistics(Number(userId));
+            if(result.error) return res.status(400).json({error: result.error});
+            return res.status(200).json({
+                message: result.message,
+                statistics: result.statistics
+            });
+        }
+        catch(error){
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+    }
 }

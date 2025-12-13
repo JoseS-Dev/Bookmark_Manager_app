@@ -32,3 +32,11 @@ export interface UserDataUpdate{
     avatar_url?: string;
     bio?: string;
 }
+
+// Defino la interfaz de estadisticas de usuarios
+export interface UserStadistics{
+    total_bookmarks: number;
+    total_collections: number;
+    total_likes_given: number;
+    total_comments_made: number;
+}
