@@ -15,7 +15,14 @@ export class ModelBookmark {
         // Si existe, se obtienen los bookmarks de la colección
         const bookmarks = await prisma.bookmark.findMany({
             where: { collection_id: collectionId },
-            select: selectAllWithoutTimestamps(prisma.bookmark)
+            select: {
+                ...selectAllWithoutTimestamps(prisma.bookmark),
+                bookmark_tag: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
         });
         if(!bookmarks || bookmarks.length === 0){
             return {
@@ -54,7 +61,14 @@ export class ModelBookmark {
         // Si existe, se obtienen los bookmarks favoritos de la colección
         const bookmarks = await prisma.bookmark.findMany({
             where: { collection_id: collectionId, is_favorite: true },
-            select: selectAllWithoutTimestamps(prisma.bookmark)
+            select: {
+                ...selectAllWithoutTimestamps(prisma.bookmark),
+                bookmark_tag: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
         });
         if(!bookmarks || bookmarks.length === 0){
             return {
@@ -78,7 +92,14 @@ export class ModelBookmark {
         // Si existe, se obtienen los bookmarks archivados de la colección
         const bookmarks = await prisma.bookmark.findMany({
             where: { collection_id: collectionId, is_archived: true },
-            select: selectAllWithoutTimestamps(prisma.bookmark)
+            select: {
+                ...selectAllWithoutTimestamps(prisma.bookmark),
+                bookmark_tag: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
         });
         if(!bookmarks || bookmarks.length === 0){
             return {
@@ -115,17 +136,24 @@ export class ModelBookmark {
                     bookmark_id: createdBookmark.id,
                     tag_id: tagId
                 }));
-                await tsx.bookmark_tag.createMany({
+                console.log(bookmarkTagData);
+                const tagsRelational = await tsx.bookmark_tag.createMany({
                     data: bookmarkTagData
                 });
+                return {
+                    message: "Bookmark creado exitosamente",
+                    bookmark: {
+                        bookmark: createdBookmark,
+                        tags: tagsRelational
+                    }
+                }
             }
             return {
                 message: "Bookmark creado exitosamente",
                 bookmark: {
-                    bookmark: createdBookmark,
-                    tags: tags || []
+                    bookmark: createdBookmark
                 }
-            } 
+            }
         });
         if(!newBookmark) return { error: "Error al crear el bookmark" };
         return {

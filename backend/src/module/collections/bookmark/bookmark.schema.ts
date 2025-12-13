@@ -12,7 +12,8 @@ const bookmarkSchema = z.object({
     published_at: z.string().refine((date) => {
         const parsedDate = new Date(date);
         return !isNaN(parsedDate.getTime());
-    }).transform((date) => new Date(date))
+    }).transform((date) => new Date(date)),
+    tags: z.array(z.number()).optional()
 });
 
 // Defino el esquema de validación para actualizar un bookmark

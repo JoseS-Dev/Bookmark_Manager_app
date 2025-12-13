@@ -28,7 +28,12 @@ export class ControllerLike {
 
     // Controlador para crear un nuevo like
     createLike = async (req: Request, res: Response) => {
-        const validation = validateDataLike(req.body);
+        if(!req.user) return res.status(401).json({error: "Usuario no autenticado"});
+        const likeData = {
+            ...req.body,
+            user_id: req.user.id
+        }
+        const validation = validateDataLike(likeData);
         try{
             if(!validation.success){
                 return res.status(400).json({

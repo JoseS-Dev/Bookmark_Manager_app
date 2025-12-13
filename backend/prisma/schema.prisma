@@ -27,8 +27,8 @@ model users {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   collections collection[]
-  likes Like[]
-  comments comment[]
+  likes like_bookmark[]
+  comments comment_bookmark[]
   user_stats user_stats[]
   sessions session[]
   @@map("users")
@@ -65,8 +65,8 @@ model bookmark{
   updated_at DateTime @updatedAt
   collection collection @relation(fields: [collection_id], references: [id], onDelete: Cascade)
   bookmark_tag bookmark_tag[]
-  likes Like[]
-  bookmark_comments comment[]
+  likes like_bookmark[]
+  bookmark_comments comment_bookmark[]
 }
 
 // Defino el modelo de tags para los bookmarks
@@ -91,7 +91,7 @@ model bookmark_tag{
 }
 
 // Defino el modelo de me gustas para los bookmarks
-model Like{
+model like_bookmark{
   id Int @id @default(autoincrement())
   bookmark_id Int
   user_id Int
@@ -102,7 +102,7 @@ model Like{
 }
 
 // Defino el modelo de comentarios para los bookmarks
-model comment{
+model comment_bookmark{
   id Int @id @default(autoincrement())
   bookmark_id Int
   user_id Int

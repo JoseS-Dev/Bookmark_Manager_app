@@ -79,8 +79,11 @@ export class BookmarkController {
         if(!req.file) return res.status(400).json({error: "No se proporcionó una imagen para el bookmark"});
         const BookmarkData = {
             ...req.body,
-            image_bookmark: req.file.path
+            collection_id: Number(req.body.collection_id),
+            image_url: req.file.path,
+            tags: req.body.tags ? JSON.parse(req.body.tags) : []
         };
+        console.log(BookmarkData);
         const validation = validateBookmarkData(BookmarkData);
         try{
             if(!validation.success){
@@ -106,7 +109,8 @@ export class BookmarkController {
         if(!req.file) return res.status(400).json({error: "No se proporcionó una imagen para el bookmark"});
         const BookmarkData = {
             ...req.body,
-            image_bookmark: req.body.image_bookmark ? req.file.path : undefined
+            image_bookmark: req.body.image_bookmark ? req.file.path : undefined,
+            tags: req.body.tags ? JSON.parse(req.body.tags) : undefined
         };
         const validation = validateBookmarkUpdateData(BookmarkData);
         const { bookmarkId } = req.params;

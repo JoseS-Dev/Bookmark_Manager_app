@@ -11,7 +11,7 @@ router.get('/all', controllerTag.getAllTags);
 // Ruta para crear una nueva etiqueta
 router.post('/create', controllerTag.createTag);
 // Ruta para actualizar una etiqueta por su ID
-router.put('/update/:tagId', controllerTag.updateTag);
+router.patch('/update/:tagId', controllerTag.updateTag);
 // Ruta para eliminar una etiqueta por su ID
 router.delete('/delete/:tagId', controllerTag.deleteTag);
 

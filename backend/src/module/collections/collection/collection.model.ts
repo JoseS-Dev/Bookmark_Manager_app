@@ -149,4 +149,24 @@ export class ModelCollection {
             message: "Colección eliminada exitosamente"
         }
     }
+
+    // Método para cambiar el estado de visibilidad de una colección
+    toggleCollectionsVisibilty = async(collectionId: number, is_public: boolean) => {
+        if(!collectionId) return { error: "No se proporcionó un ID de colección" };
+        if(is_public === undefined) return { error: "No se proporcionó el estado de visibilidad" };
+        // Se verifica si existe la colección
+        const existingCollection = await prisma.collection.findFirst({
+            where: { id: collectionId }
+        });
+        if(!existingCollection) return { error: "Colección no encontrada" };
+        // Si existe, se procede a actualizar el estado de visibilidad
+        const updatedCollection = await prisma.collection.update({
+            where: { id: collectionId },
+            data: { is_public: is_public },
+        });
+        if(!updatedCollection) return { error: "Error al actualizar el estado de visibilidad" };
+        return {
+            message: `El estado de visibilidad se actualizó a ${is_public ? 'público' : 'privado'}`
+        }
+    } 
 }

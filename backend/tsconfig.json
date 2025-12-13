@@ -20,5 +20,5 @@
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "types": ["node", "express", "multer"]
   },
-  "include": ["src/**/*", "types/**/*"]
+  "include": ["src/**/*", "types/**/*", "prisma/seed"]
 }

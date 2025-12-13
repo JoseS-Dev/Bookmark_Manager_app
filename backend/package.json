@@ -8,7 +8,8 @@
     "dev": "tsx watch index.ts",
     "gen:prisma": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "reset:db": "prisma migrate reset"
+    "reset:db": "prisma migrate reset",
+    "seed:db": "tsx prisma/seed/seed.database.ts"
   },
   "type": "module",
   "keywords": [],

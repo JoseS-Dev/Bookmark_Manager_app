@@ -76,7 +76,13 @@ export class CollectionController {
 
     // Método para crear una nueva colección
     createCollection = async (req: Request, res: Response) => {
-        const validation = validateCollectionData(req.body);
+        if(!req.file) return res.status(404).json({error: "Imagen de portada no proporcionada"});
+        const collectionData = {
+            ...req.body,
+            user_id: req.user?.id,
+            coverImage_url: req.file.path
+        }
+        const validation = validateCollectionData(collectionData);
         try{
             if(!validation.success){
                 return res.status(400).json({
@@ -124,6 +130,22 @@ export class CollectionController {
         const { collectionId } = req.params;
         try{
             const result = await this.modelCollection.deleteCollection(Number(collectionId));
+            if(result.error) return res.status(400).json({error: result.error});
+            return res.status(200).json({
+                message: result.message
+            });
+        }
+        catch(error){
+            return res.status(500).json({error: "Error interno del servidor"});
+        }
+    }
+
+    // Método para cambiar el estado de visibilidad de una colección
+    toggleCollectionsVisibilty = async (req: Request, res: Response) => {
+        const { collectionId } = req.params;
+        const { is_public } = req.body;
+        try{
+            const result = await this.modelCollection.toggleCollectionsVisibilty(Number(collectionId), Boolean(is_public));
             if(result.error) return res.status(400).json({error: result.error});
             return res.status(200).json({
                 message: result.message

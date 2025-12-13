@@ -60,7 +60,12 @@ export class CommentController {
 
     // Controlador para crear un nuevo comentario
     createComment = async (req: Request, res: Response) => {
-        const validation = validateDataComment(req.body);
+        if(!req.user) return res.status(401).json({error: "Usuario no autenticado"});
+        const commentData = {
+            ...req.body,
+            user_id: req.user.id
+        }
+        const validation = validateDataComment(commentData);
         try{
             if(!validation.success){
                 return res.status(400).json({

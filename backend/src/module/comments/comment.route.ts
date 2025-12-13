@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import { CommentController } from './comment.controller.ts';
 import { ModelComment } from './comment.model.ts';
+import { verifyToken } from '../../api/middlewares/auth.middleware.ts';
 
 const router: Router = Router();
 const controllerComment = new CommentController(new ModelComment());
@@ -13,10 +14,10 @@ router.get('/user/:userId',  controllerComment.getCommentsByUserId);
 // Ruta para obtener un comentario por su ID
 router.get('/:commentId', controllerComment.getCommentById);
 // Ruta para crear un nuevo comentario
-router.post('/create', controllerComment.createComment);
+router.post('/create', verifyToken, controllerComment.createComment);
 // Ruta para actualizar un comentario por su ID
-router.put('/update/:commentId', controllerComment.updateComment);
+router.patch('/update/:commentId', verifyToken, controllerComment.updateComment);
 // Ruta para eliminar un comentario por su ID
-router.delete('/delete/:commentId', controllerComment.deleteComment);
+router.delete('/delete/:commentId', verifyToken, controllerComment.deleteComment);
 
 export const CommentRoutes = router;
