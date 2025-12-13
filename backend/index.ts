@@ -24,14 +24,6 @@ app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ status: 'healthy' });
 });
 
-// Ruta no encontrada
-app.use('*', (req: Request, res: Response) => {
-    res.status(404).json({ 
-        error: 'Ruta no encontrada',
-        path: req.originalUrl 
-    });
-});
-
 // Manjo global de errores
 app.use((err: Error, req: Request, res: Response, next: Function) => {
     console.error('Error no manejado:', err);
