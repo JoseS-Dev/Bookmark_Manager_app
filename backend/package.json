@@ -11,6 +11,7 @@
     "gen:prisma": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:desploy": "prisma migrate deploy",
+    "setup:prod": "pnpm run prisma:deploy && (sleep 3 && pnpm run seed:db || true)",
     "reset:db": "prisma migrate reset",
     "seed:db": "tsx prisma/seed/seed.database.ts"
   },
