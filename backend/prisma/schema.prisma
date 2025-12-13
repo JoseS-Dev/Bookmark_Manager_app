@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Defino el modelo de Usuario para el Sistema
+model users {
+  id Int @id @default(autoincrement())
+  clerkId String? @unique
+  name_user String
+  email_user String @unique
+  username_user String @unique
+  password_user String
+  avatar_url String?
+  bio String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  collections collection[]
+  likes like_bookmark[]
+  comments comment_bookmark[]
+  user_stats user_stats[]
+  sessions session[]
+  @@map("users")
+}
+
+// Defino el modelo de colecciones de bookmarks
+model collection{
+  id Int @id @default(autoincrement())
+  name_collection String
+  user_id Int
+  description_collection String?
+  slug_collection String @unique
+  coverImage_url String?
+  is_public Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  bookmarks bookmark[]
+}
+
+// Defino el modelo de los bookmarks
+model bookmark{
+  id Int @id @default(autoincrement())
+  collection_id Int
+  title_bookmark String
+  description_bookmark String?
+  url_bookmark String
+  image_url String
+  author_bookmark String?
+  published_at DateTime
+  is_archived Boolean @default(false)
+  is_favorite Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  collection collection @relation(fields: [collection_id], references: [id], onDelete: Cascade)
+  bookmark_tag bookmark_tag[]
+  likes like_bookmark[]
+  bookmark_comments comment_bookmark[]
+}
+
+// Defino el modelo de tags para los bookmarks
+model tag{
+  id Int @id @default(autoincrement())
+  name_tag String @unique
+  icon_tag String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  bookmark_tag bookmark_tag[]
+}
+
+// Defino el modelo intermedio entre bookmarks y tags
+model bookmark_tag{
+  bookmark_id Int
+  tag_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  bookmark bookmark @relation(fields: [bookmark_id], references: [id], onDelete: Cascade)
+  tag tag @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+  @@id([bookmark_id, tag_id])
+}
+
+// Defino el modelo de me gustas para los bookmarks
+model like_bookmark{
+  id Int @id @default(autoincrement())
+  bookmark_id Int
+  user_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  bookmark bookmark @relation(fields: [bookmark_id], references: [id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+// Defino el modelo de comentarios para los bookmarks
+model comment_bookmark{
+  id Int @id @default(autoincrement())
+  bookmark_id Int
+  user_id Int
+  content_comment String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  bookmark bookmark @relation(fields: [bookmark_id], references: [id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@unique([bookmark_id, user_id, content_comment])
+}
+
+// Defino el modelo de sessión para los usuarios (Login) (Es temporal porque uso Clerk)
+model session{
+  id Int @id @default(autoincrement())
+  user_id Int
+  is_active Boolean @default(true)
+  looged_in_at DateTime @default(now())
+  looged_out_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+// Defino el modelo de estadisticas de uso del usuario
+model user_stats{
+  id Int @id @default(autoincrement())
+  user_id Int
+  total_bookmarks Int @default(0)
+  total_collections Int @default(0)
+  total_likes_given Int @default(0)
+  total_comments_made Int @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
