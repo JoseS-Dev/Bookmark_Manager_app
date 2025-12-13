@@ -8,4 +8,5 @@ export const SETTINGS = {
     BASE_URL: process.env.BASE_URL || '/api/v1',
     JWT_SECRET: process.env.JWT_SECRET || 'YOUR_SECRET_KEY',
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1h',
+    NODE_ENV: process.env.NODE_ENV || 'development',
 }
